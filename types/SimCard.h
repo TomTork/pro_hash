@@ -21,18 +21,9 @@ struct SimCard {
      */
     int year = 0;
     /**
-     * @brief Признак наличия
+     * @brief Признак наличия или признак продажи
      */
     bool exists = true;
-
-    // SimCard() {
-    //     if (number.length() != 11) throw invalid_argument("SimCard number must be 11 characters");
-    //     if (number[3] != '-') throw invalid_argument("Third character must be '-'");
-    //     const string valid = "1234567890-";
-    //     for (int i = 0; i < 11; i++) {
-    //         if (!valid.contains(number[i])) throw invalid_argument("Number invalid: " + number);
-    //     }
-    // }
 };
 
 #endif //SIMCARD_H

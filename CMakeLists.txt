@@ -10,4 +10,11 @@ add_executable(pro_hash main.cpp
         helper/readLinesFromFile.h
         helper/getInitialData.h
         helper/split.h
+        helper/directSearch.h
+        simcard-hash-table/SimCardHashTable.cpp
+        simcard-hash-table/SimCardHashTable.h
+        status-list/StatusList.cpp
+        status-list/StatusList.h
+        client-avl-tree/ClientAvlTree.cpp
+        client-avl-tree/ClientAvlTree.h
 )
