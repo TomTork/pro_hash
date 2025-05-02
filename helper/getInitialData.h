@@ -12,7 +12,7 @@
 
 using namespace std;
 
-inline tuple<vector<Client>, vector<SimCard>, vector<Status>> getInitialData() {
+static tuple<vector<Client>, vector<SimCard>, vector<Status>> getInitialData() {
     vector<Client> clients;
     vector<SimCard> simCards;
     vector<Status> statuses;

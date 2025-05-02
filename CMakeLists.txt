@@ -17,4 +17,6 @@ add_executable(pro_hash main.cpp
         status-list/StatusList.h
         client-avl-tree/ClientAvlTree.cpp
         client-avl-tree/ClientAvlTree.h
+        helper/checkPassport.h
+        helper/input.h
 )

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-inline vector<string> readLinesFromFile(const string& filePath) {
+static vector<string> readLinesFromFile(const string& filePath) {
     vector<string> lines;
     ifstream file(filePath);
     if (!file.is_open()) throw runtime_error("Could not open file " + filePath);

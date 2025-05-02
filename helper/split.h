@@ -6,7 +6,7 @@
 
 using namespace std;
 
-inline vector<string> split(const string& str, const string& delimiter) {
+static vector<string> split(const string& str, const string& delimiter) {
     vector<string> tokens;
     size_t start = 0;
     size_t end = str.find(delimiter);

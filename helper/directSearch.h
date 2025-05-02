@@ -5,7 +5,7 @@
 
 using namespace std;
 
-inline bool directSearch(const string& text, const string& pattern) {
+static bool directSearch(const string& text, const string& pattern) {
     const unsigned long n = text.length();
     const unsigned long m = pattern.length();
     for (int i = 0; i <= n - m; i++) {
