@@ -25,6 +25,7 @@ void StatusList::push_back(const Status& status) {
         newNode->prev = tail;
         tail = newNode;
     }
+    insertionSort();
 }
 
 void StatusList::insertionSort() {

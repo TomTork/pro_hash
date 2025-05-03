@@ -96,3 +96,25 @@ void SimCardHashTable::rehash() {
         }
     }
 }
+
+void SimCardHashTable::removeAll() {
+    table.clear();
+}
+
+void SimCardHashTable::displayByTariff(const string &tariff) const {
+    for (size_t i = 0; i < capacity; i++) {
+        if (table[i].occupied && !table[i].deleted && table[i].sim.tariff == tariff) {
+            cout << "[" << i << "] " << table[i].sim.number << " " << table[i].sim.tariff << " " << table[i].sim.year << endl;
+        }
+    }
+}
+
+bool SimCardHashTable::updateExists(const string &number, const bool &exists) {
+    for (size_t i = 0; i < capacity; i++) {
+        if (table[i].occupied && !table[i].deleted && table[i].sim.number == number) {
+            table[i].sim.exists = exists;
+            return true;
+        }
+    }
+    return false;
+}

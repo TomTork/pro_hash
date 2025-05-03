@@ -24,7 +24,7 @@ public:
     void insertionSort();
     void print() const;
     bool remove(const string& number);
-    Status* get(const string& number) const;
+    [[nodiscard]] Status* get(const string& number) const;
 
 private:
     Node* head;

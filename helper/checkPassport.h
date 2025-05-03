@@ -22,7 +22,7 @@ static bool checkPassport(string& passport, const string& preview = "Input passp
             }
             if (state) return true;
         }
-        cout << "Incorrect passport: " << passport << ". Try again." << endl;
+        cerr << "Incorrect passport: " << passport << ". Try again." << endl;
     }
     return false;
 }

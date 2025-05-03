@@ -17,6 +17,9 @@ public:
     [[nodiscard]] optional<SimCard> find(const string& number) const;
     bool remove(const std::string& number);
     void display() const;
+    void displayByTariff(const string& tariff) const;
+    void removeAll();
+    bool updateExists(const string& number, const bool& exists);
 
 private:
     struct Entry {
