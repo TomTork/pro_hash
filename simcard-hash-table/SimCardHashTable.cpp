@@ -75,7 +75,7 @@ bool SimCardHashTable::remove(const std::string& number) {
 void SimCardHashTable::display() const {
     for (size_t i = 0; i < capacity; i++) {
         if (table[i].occupied && !table[i].deleted) {
-            cout << "[" << i << "] " << table[i].sim.number
+            cout << table[i].sim.number
                       << " | Tariff: " << table[i].sim.tariff
                       << " | Year: " << table[i].sim.year << endl;
         }
@@ -97,14 +97,10 @@ void SimCardHashTable::rehash() {
     }
 }
 
-void SimCardHashTable::removeAll() {
-    table.clear();
-}
-
 void SimCardHashTable::displayByTariff(const string &tariff) const {
     for (size_t i = 0; i < capacity; i++) {
         if (table[i].occupied && !table[i].deleted && table[i].sim.tariff == tariff) {
-            cout << "[" << i << "] " << table[i].sim.number << " " << table[i].sim.tariff << " " << table[i].sim.year << endl;
+            cout << table[i].sim.number << " " << table[i].sim.tariff << " " << table[i].sim.year << endl;
         }
     }
 }
@@ -118,3 +114,14 @@ bool SimCardHashTable::updateExists(const string &number, const bool &exists) {
     }
     return false;
 }
+
+vector<SimCard> SimCardHashTable::getAll() const {
+    vector<SimCard> result;
+    for (size_t i = 0; i < capacity; i++) {
+        if (table[i].occupied && !table[i].deleted) {
+            result.push_back(table[i].sim);
+        }
+    }
+    return result;
+}
+

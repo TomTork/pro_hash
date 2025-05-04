@@ -181,15 +181,16 @@ Client* ClientAvlTree::find(const string& passport) {
     return find(root, passport);
 }
 
-Client* ClientAvlTree::findByFragment(Node* node, const string& fragment) {
-    if (!node) return nullptr;
-    if (directSearch(node->data.fio, fragment) || directSearch(node->data.address, fragment)) return &node->data;
-    findByFragment(node->left, fragment);
-    findByFragment(node->right, fragment);
+vector<Client*> ClientAvlTree::findByFragment(Node* node, const string& fragment, vector<Client*> &clients) {
+    if (!node) return clients;
+    if (directSearch(node->data.fio, fragment) || directSearch(node->data.address, fragment)) clients.push_back(&node->data);
+    findByFragment(node->left, fragment, clients);
+    findByFragment(node->right, fragment, clients);
+    return clients;
 }
 
-Client* ClientAvlTree::findByFragment(const string& fragment) {
-    return find(root, fragment);
+vector<Client*> ClientAvlTree::findByFragment(const string& fragment, vector<Client*> &clients) {
+    return findByFragment(root, fragment, clients);
 }
 
 void ClientAvlTree::preOrder() {

@@ -43,25 +43,28 @@ int main() {
     }
     // === END INIT ===
 
-    bool status, work2 = true, work3 = true, work4 = true;
+    bool status;
     string commandString, typeCommand;
     Client inputClient;
     SimCard inputSimCard;
     Status inputStatus;
+    vector<Client*> results; // для команды №6 клиентов
+    vector<Status*> resultsStatus;
+    vector<SimCard> resultsSimCards;
     while (true) {
         cout << "Management:\n1 — Client\n2 — Sim-card\n3 — Status\n0 — Exit" << endl;
+        typeCommand.clear();
         cin >> typeCommand;
         if (typeCommand == "exit" || typeCommand == "0") break;
         switch (typeCommand[0] - '0') {
             case 1:
-                // НЕ ВЫПОЛНЕНЫ В ПОЛНОЙ МЕРЕ УСЛОВИЯ ПОИСКА КЛИЕНТА ПО НОМЕРУ ПАСПОРТА, ВЕДЬ СИМ-КАРТЫ ДОЛЖНЫ БЫТЬ ВЫДАНЫ
-                while (work2) {
+                while (true) {
                     cout <<
                         "Enter command:\n1 — Add new Client\n2 — Delete Client\n3 — Display all Clients\n4 — Delete all Clients"
                         "\n5 — Search Client by passport\n6 — Search Client by fragment FIO or address\n0 — Exit"
                     << endl;
                     cin >> commandString;
-                    if (commandString == "exit" || commandString.empty() || commandString == "0") { work2 = false; break; }
+                    if (commandString == "exit" || commandString.empty() || commandString == "0") break;
                     switch (commandString[0] - '0') {
                         case 1:
                             if (!checkPassport(inputClient.passport)) break;
@@ -93,14 +96,24 @@ int main() {
                                 cerr << "Client does not found!" << endl;
                             } else {
                                 cout << find->passport << " " << find->fio << " " << find->placeAndDateOfIssue << " " << find->address << find->year << endl;
+                                if (const vector<Status*> _statuses = statusList->getByPassport(find->passport); !_statuses.empty()) {
+                                    for (const auto& _status : _statuses) {
+                                        if (const optional<SimCard> simCard = simCardHashTable->find(_status->number); simCard && !simCard->exists) {
+                                            cout << _status->number << endl;
+                                        }
+                                    }
+                                }
                             }
                             break;
                         case 6:
                             input(inputClient.fio, "Input FIO or address fragment:");
-                            if (const Client* find = clientAvlTree->findByFragment(inputClient.fio); find == nullptr) {
-                                cerr << "Client does not exist!" << endl;
+                            if (results = clientAvlTree->findByFragment(inputClient.fio, results); results.empty()) {
+                                cerr << "Clients does not exists!" << endl;
                             } else {
-                                cout << find->passport << " " << find->fio << " " << find->placeAndDateOfIssue << " " << find->address << find->year << endl;
+                                for (const auto& client : results) {
+                                    cout << client->passport << " " << client->fio << " " << client->placeAndDateOfIssue << " " << client->address << client->year << endl;
+                                }
+                                results.clear();
                             }
                             break;
                         default:
@@ -110,11 +123,11 @@ int main() {
                 }
                 break;
             case 2:
-                while (work3) {
+                while (true) {
                     cout << "Enter command:\n1 — Add new sim-card\n2 — Delete sim-card\n3 — Get all sim-cards\n4 — Delete all sim-cards"
                             "\n5 — Search sim-card by number\n6 — Search sim-cards by tariffs\n0 — Exit" << endl;
                     cin >> commandString;
-                    if (commandString == "exit" || commandString.empty() || commandString == "0") { work3 = false; break; }
+                    if (commandString == "exit" || commandString.empty() || commandString == "0") break;
                     switch (commandString[0] - '0') {
                         case 1:
                             if (!checkNumber(inputSimCard.number)) break;
@@ -126,21 +139,59 @@ int main() {
                         case 2:
                             input(inputSimCard.number, "Input number for delete:");
                             if (simCardHashTable->remove(inputSimCard.number)) {
+                                resultsStatus = statusList->get(inputSimCard.number);
+                                for (const auto& _status : resultsStatus) {
+                                    if (clientAvlTree->remove(_status->passport)) {
+                                        cout << "Client " << _status->passport << " deleted" << endl;
+                                    } else {
+                                        cerr << "Client " << _status->passport << " deleted failed!" << endl;
+                                    }
+                                    statusList->remove(_status->number);
+                                }
+                                resultsStatus.clear();
                                 cout << "Successfully deleted" << endl;
                             } else {
-                                cerr << "Error deleting! Check number: " + inputSimCard.number << endl;
+                                cerr << "Error deleting! Check number: " << inputSimCard.number << endl;
                             }
                             break;
                         case 3:
                             simCardHashTable->display();
                             break;
                         case 4:
-                            simCardHashTable->removeAll();
+                            resultsSimCards = simCardHashTable->getAll();
+                            for (const auto& simCard : resultsSimCards) {
+                                if (simCardHashTable->remove(simCard.number)) {
+                                    resultsStatus = statusList->get(simCard.number);
+                                    for (const auto& _status : resultsStatus) {
+                                        if (clientAvlTree->remove(_status->passport)) {
+                                            cout << "Client " << _status->passport << " deleted" << endl;
+                                        } else {
+                                            cerr << "Client " << _status->passport << " deleted failed!" << endl;
+                                        }
+                                        statusList->remove(_status->number);
+                                    }
+                                    resultsStatus.clear();
+                                    cout << "Successfully deleted" << endl;
+                                } else {
+                                    cerr << "Error deleting! Check number: " << simCard.number << endl;
+                                }
+                            }
                             break;
                         case 5:
                             input(inputSimCard.number, "Input number for search:");
                             if (const optional<SimCard> find = simCardHashTable->find(inputSimCard.number)) {
                                 cout << find->number << " " << find->tariff << " " << find->year << " " << find->exists << endl;
+                                resultsStatus = statusList->get(find->number);
+                                if (!resultsStatus.empty()) {
+                                    for (const auto& _status : resultsStatus) {
+                                        if (const optional<SimCard> simCard = simCardHashTable->find(_status->number); simCard && !simCard->exists) {
+                                            const Client* _client = clientAvlTree->find(_status->passport);
+                                            cout << "Client: " << _client->fio << " " << _client->passport << endl;
+                                        }
+                                    }
+                                } else {
+                                    cerr << "Clients not found!" << endl;
+                                }
                             } else {
                                 cerr << "SimCard does not found!" << endl;
                             }
@@ -155,29 +206,42 @@ int main() {
                 }
                 break;
             case 3:
-                while (work4) {
+                while (true) {
                     cout << "Enter command:\n1 — Create status\n2 — Update status\n0 — Exit" << endl;
                     cin >> commandString;
-                    if (commandString == "exit" || commandString.empty() || commandString == "0") { work4 = false; break; }
+                    if (commandString == "exit" || commandString.empty() || commandString == "0") break;
                     switch (commandString[0] - '0') {
                         case 1:
                             if (!checkPassport(inputStatus.passport)) break;
-                            if (!checkNumber(inputStatus.number)) break;
-                            input(inputStatus.dateStart, "Date of issue:");
-                            input(inputStatus.dateEnd, "Issue end date:");
-                            statusList->push_back(inputStatus);
+                            if (clientAvlTree->find(inputStatus.passport)) {
+                                if (!checkNumber(inputStatus.number)) break;
+                                if (const optional<SimCard> simCard = simCardHashTable->find(inputStatus.number); simCard && simCard->exists) {
+                                    simCardHashTable->updateExists(inputStatus.number, false);
+                                    input(inputStatus.dateStart, "Date of issue:");
+                                    input(inputStatus.dateEnd, "Issue end date:");
+                                    statusList->push_back(inputStatus);
+                                } else {
+                                    cerr << "Sim card via number " << inputStatus.number << " does not exist" << endl;
+                                }
+                            } else {
+                                cerr << "Client via passport " << inputStatus.passport << " does not exist!" << endl;
+                            }
                             break;
                         case 2:
                             if (!checkNumber(inputSimCard.number)) break;
-                            input(status, "Input status of sim-card:");
-                            if (!status) {
-                                if (statusList->remove(inputSimCard.number)) {
-                                    cout << "Successfully" << endl;
-                                } else {
-                                    cerr << "Sim card not in status list!" << endl;
+                            if (simCardHashTable->find(inputSimCard.number)) {
+                                input(status, "Input status of sim-card:");
+                                if (!status) {
+                                    if (statusList->remove(inputSimCard.number)) {
+                                        cout << "Successfully" << endl;
+                                    } else {
+                                        cerr << "Sim card not in status list!" << endl;
+                                    }
                                 }
+                                simCardHashTable->updateExists(inputSimCard.number, status);
+                            } else {
+                                cerr << "Sim card not found!" << endl;
                             }
-                            simCardHashTable->updateExists(inputSimCard.number, status);
                             break;
                         default:
                             break;
@@ -185,7 +249,7 @@ int main() {
                 }
                 break;
             default:
-                cerr << "Incorrect command: " + typeCommand << endl;
+                cerr << "Incorrect command: " << typeCommand << endl;
                 break;
         }
 

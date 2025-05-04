@@ -92,14 +92,26 @@ bool StatusList::remove(const string& number) {
     return false;
 }
 
-Status* StatusList::get(const string& number) const {
+vector<Status*> StatusList::get(const string& number) const {
+    vector<Status*> result;
     Node* current = head;
     while (current) {
-        if (current->data.number == number) {
-            return &current->data;
+        if (current->data.number == number && !current->data.dateStart.empty() && !current->data.dateEnd.empty()) {
+            result.push_back(&current->data);
         }
         current = current->next;
     }
-    return nullptr;
+    return result;
 }
 
+vector<Status*> StatusList::getByPassport(const string &passport) const {
+    vector<Status*> result;
+    Node* current = head;
+    while (current) {
+        if (current->data.passport == passport && !current->data.dateStart.empty() && !current->data.dateEnd.empty()) {
+            result.push_back(&current->data);
+        }
+        current = current->next;
+    }
+    return result;
+}

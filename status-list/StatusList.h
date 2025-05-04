@@ -24,7 +24,8 @@ public:
     void insertionSort();
     void print() const;
     bool remove(const string& number);
-    [[nodiscard]] Status* get(const string& number) const;
+    [[nodiscard]] vector<Status*> get(const string& number) const;
+    [[nodiscard]] vector<Status*> getByPassport(const string& passport) const;
 
 private:
     Node* head;

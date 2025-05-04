@@ -18,8 +18,8 @@ public:
     bool remove(const std::string& number);
     void display() const;
     void displayByTariff(const string& tariff) const;
-    void removeAll();
     bool updateExists(const string& number, const bool& exists);
+    [[nodiscard]] vector<SimCard> getAll() const;
 
 private:
     struct Entry {
@@ -32,8 +32,8 @@ private:
     size_t capacity;
     size_t size;
 
-    size_t hash1(const std::string& key) const;
-    size_t hash2(const std::string& key) const;
+    [[nodiscard]] size_t hash1(const std::string& key) const;
+    [[nodiscard]] size_t hash2(const std::string& key) const;
 
     void rehash();
 };

@@ -28,7 +28,7 @@ private:
     static Node* minValueNode(Node* node);
     Node* remove(Node* node, const string& passport);
     Client* find(Node* node, const string& passport);
-    Client* findByFragment(Node* node, const string& fragment);
+    vector<Client*> findByFragment(Node* node, const string& fragment, vector<Client*> &clients);
 
 public:
     ClientAvlTree();
@@ -46,7 +46,7 @@ public:
     void preOrder();
     bool remove(const string& passport);
     Client* find(const string& passport);
-    Client* findByFragment(const string& fragment);
+    vector<Client*> findByFragment(const string& fragment, vector<Client*> &clients);
     void clear();
 };
 
