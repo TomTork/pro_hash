@@ -95,7 +95,7 @@ int main() {
                             if (const Client* find = clientAvlTree->find(inputClient.passport); find == nullptr) {
                                 cerr << "Client does not found!" << endl;
                             } else {
-                                cout << find->passport << " " << find->fio << " " << find->placeAndDateOfIssue << " " << find->address << find->year << endl;
+                                cout << find->passport << " " << find->fio << " " << find->placeAndDateOfIssue << " " << find->address << " " << find->year << endl;
                                 if (const vector<Status*> _statuses = statusList->getByPassport(find->passport); !_statuses.empty()) {
                                     for (const auto& _status : _statuses) {
                                         if (const optional<SimCard> simCard = simCardHashTable->find(_status->number); simCard && !simCard->exists) {
@@ -111,7 +111,7 @@ int main() {
                                 cerr << "Clients does not exists!" << endl;
                             } else {
                                 for (const auto& client : results) {
-                                    cout << client->passport << " " << client->fio << " " << client->placeAndDateOfIssue << " " << client->address << client->year << endl;
+                                    cout << client->passport << " " << client->fio << " " << client->placeAndDateOfIssue << " " << client->address << " " <<  client->year << endl;
                                 }
                                 results.clear();
                             }
@@ -207,7 +207,7 @@ int main() {
                 break;
             case 3:
                 while (true) {
-                    cout << "Enter command:\n1 — Create status\n2 — Update status\n0 — Exit" << endl;
+                    cout << "Enter command:\n1 — Create status\n2 — Update status\n3 — Get All Statuses\n0 — Exit" << endl;
                     cin >> commandString;
                     if (commandString == "exit" || commandString.empty() || commandString == "0") break;
                     switch (commandString[0] - '0') {
@@ -242,6 +242,9 @@ int main() {
                             } else {
                                 cerr << "Sim card not found!" << endl;
                             }
+                            break;
+                        case 3:
+                            statusList->print();
                             break;
                         default:
                             break;

@@ -114,6 +114,7 @@ void ClientAvlTree::preOrder(const Node* node) {
     }
 }
 
+// Вспомогательная функция для удаления элемента в АВЛ-дереве, служит для проверки перезаписи, если у нас два потомка
 ClientAvlTree::Node* ClientAvlTree::minValueNode(Node* node) {
     Node* current = node;
     while (current && current->left)
